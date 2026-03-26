@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vegetable Quality Detector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>🥕 Vegetable Quality Detector</h1>
+        <p>Upload an image to check freshness</p>
+
+        <input type="file" id="imageInput" accept="image/*">
+        
+        <div class="preview-container">
+            <img id="preview" src="" alt="Image Preview" hidden>
+        </div>
+
+        <button id="analyzeBtn">Analyze</button>
+
+        <div id="result" class="result hidden">
+            <h2>Result</h2>
+            <p><strong>Grade:</strong> <span id="grade"></span></p>
+            <p><strong>Freshness:</strong> <span id="freshness"></span>%</p>
+            <p><strong>Confidence:</strong> <span id="confidence"></span></p>
+            <p><strong>Explanation:</strong> <span id="message"></span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
