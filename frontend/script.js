@@ -27,7 +27,7 @@ analyzeBtn.addEventListener("click", async () => {
     }
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("file", file);
 
     try {
         const response = await fetch("http://localhost:8000/analyze", {
@@ -35,29 +35,22 @@ analyzeBtn.addEventListener("click", async () => {
             body: formData
         });
 
-        // If backend not ready → fallback
-        if (!response.ok) throw new Error("Backend not working");
+        console.log("STATUS:", response.status);
 
         const data = await response.json();
+        console.log("DATA:", data);
+
+        // 🔥 Always display result if we got JSON
         displayResult(data);
 
     } catch (error) {
-        console.warn("Using fallback response");
-
-        // 🔥 fallback (from your doc)
-        const dummyData = {
-            grade: "B",
-            freshness: 70,
-            confidence: 0.75,
-            message: "Minor defects detected"
-        };
-
-        displayResult(dummyData);
+        console.error("FETCH ERROR:", error);
+        alert("Something went wrong. Check console.");
     }
 });
-
-// Display result
 function displayResult(data) {
+    console.log("DISPLAYING:", data);
+
     resultBox.classList.remove("hidden");
 
     gradeEl.textContent = data.grade;
