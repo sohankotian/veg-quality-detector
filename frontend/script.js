@@ -27,41 +27,20 @@ analyzeBtn.addEventListener("click", async () => {
     }
 
     const formData = new FormData();
-    formData.append("image", file);
+    formData.append("file", file); // IMPORTANT: must match backend
 
     try {
-        const response = await fetch("http://localhost:8000/analyze", {
+        const response = await fetch("http://192.168.x.x:8000/analyze", {
             method: "POST",
             body: formData
         });
 
-        // If backend not ready → fallback
-        if (!response.ok) throw new Error("Backend not working");
-
         const data = await response.json();
+
         displayResult(data);
 
     } catch (error) {
-        console.warn("Using fallback response");
-
-        // 🔥 fallback (from your doc)
-        const dummyData = {
-            grade: "B",
-            freshness: 70,
-            confidence: 0.75,
-            message: "Minor defects detected"
-        };
-
-        displayResult(dummyData);
+        console.error("API Error:", error);
+        alert("Failed to analyze image. Check backend.");
     }
 });
-
-// Display result
-function displayResult(data) {
-    resultBox.classList.remove("hidden");
-
-    gradeEl.textContent = data.grade;
-    freshnessEl.textContent = data.freshness;
-    confidenceEl.textContent = data.confidence;
-    messageEl.textContent = data.message;
-}
