@@ -27,20 +27,34 @@ analyzeBtn.addEventListener("click", async () => {
     }
 
     const formData = new FormData();
-    formData.append("file", file); // IMPORTANT: must match backend
+    formData.append("file", file);
 
     try {
-        const response = await fetch("http://192.168.x.x:8000/analyze", {
+        const response = await fetch("http://localhost:8000/analyze", {
             method: "POST",
             body: formData
         });
 
-        const data = await response.json();
+        console.log("STATUS:", response.status);
 
+        const data = await response.json();
+        console.log("DATA:", data);
+
+        // 🔥 Always display result if we got JSON
         displayResult(data);
 
     } catch (error) {
-        console.error("API Error:", error);
-        alert("Failed to analyze image. Check backend.");
+        console.error("FETCH ERROR:", error);
+        alert("Something went wrong. Check console.");
     }
 });
+function displayResult(data) {
+    console.log("DISPLAYING:", data);
+
+    resultBox.classList.remove("hidden");
+
+    gradeEl.textContent = data.grade;
+    freshnessEl.textContent = data.freshness;
+    confidenceEl.textContent = data.confidence;
+    messageEl.textContent = data.message;
+}

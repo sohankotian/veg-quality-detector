@@ -5,12 +5,11 @@ import numpy as np
 from PIL import Image
 import io
 
-
 from grading import get_grade
 
 app = FastAPI()
 
-# Allow frontend requests (VERY IMPORTANT)
+# Allow frontend requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,17 +18,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load model
-model = keras.models.load_model("model/model.h5")
+# Load model (safe mode)
+model = keras.models.load_model("model/model.h5", compile=False)
 
 # Load labels
 with open("model/labels.txt", "r") as f:
     labels = [line.strip() for line in f.readlines()]
 
 
-# Image preprocessing (Teachable Machine style)
+# Image preprocessing
 def preprocess_image(image: Image.Image):
-    image = image.resize((224, 224))  # common size
+    image = image.resize((224, 224))
     img_array = np.array(image) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
@@ -45,9 +44,7 @@ async def analyze(file: UploadFile = File(...)):
 
         print("🖼 Image loaded")
 
-        image = image.resize((224, 224))
-        img_array = np.array(image) / 255.0
-        img_array = np.expand_dims(img_array, axis=0)
+        img_array = preprocess_image(image)
 
         print("🤖 Running prediction")
 
@@ -57,9 +54,20 @@ async def analyze(file: UploadFile = File(...)):
 
         confidence = float(np.max(predictions))
         index = int(np.argmax(predictions))
-        label = labels[index]
 
-        print("🏷 Label:", label)
+        raw_label = labels[index]
+        print("🏷 Raw label:", raw_label)
+
+        # 🔥 FIX: robust label extraction
+        label = raw_label.split(" ")[-1].strip().lower()
+
+        # Extra safety (handles unexpected formats)
+        if "fresh" in label:
+            label = "fresh"
+        elif "rotten" in label:
+            label = "rotten"
+
+        print("✅ Clean label:", label)
 
         grade, freshness, message = get_grade(label, confidence)
 
