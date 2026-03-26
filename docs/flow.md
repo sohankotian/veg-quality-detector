@@ -39,7 +39,7 @@ Run training:
 - 
 ---
 
-### 4. Backend Processing ⚙️
+### 4. Backend Processing 
 
 - Load trained model (`model.h5`)
 - Accept image input
@@ -67,7 +67,7 @@ Files:
 
 ---
 
-### 6. Prediction Flow 🔄
+### 6. Prediction Flow 
 
 1. User uploads image from frontend  
 2. Image is sent to backend  
